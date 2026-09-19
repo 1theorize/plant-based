@@ -3,10 +3,6 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local vineModule = ReplicatedStorage:FindFirstChild("vinesystem", true)
 
 if not vineModule then 
-    warn("vinesystem isn't in the ReplicatedStorage, do better:")
-        for _, child in ReplicatedStorage:GetChildren() do
-            print(" - " .. child.Name .. " (" .. child.ClassName .. ")")
-        end
         error("failed to complete vinesystem module")
     end
 
@@ -14,5 +10,17 @@ if not vineModule then
 
     task.wait(2)
 
+    -- og vines
+    local origiposition = Vector3.new(0, 5, 0)
+    local updwardDirection = Vector3.new(0, 1, 0)
 -- spawn the vine 
-vinesystem.grow(Vector3.new(0, 5, 0), Vector3.new(1, 0.2, 0))
+vinesystem.grow(origiposition, updwardDirection, {
+    MaxSegments = 20
+    SegmentLength = 1.3,
+    GrowthRate = 0.3,
+    Color = Color3.fromRGB(40, 119, 44),
+    StraightSegments = 5,
+    BranchAtSegment = 5,
+    BranchCount = 2,
+    Generation = 1,
+})
