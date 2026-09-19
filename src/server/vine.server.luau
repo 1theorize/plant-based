@@ -5,7 +5,7 @@ local vineModule = ReplicatedStorage:FindFirstChild("vinesystem", true)
 if not vineModule then 
     warn("vinesystem isn't in the ReplicatedStorage, do better:")
         for _, child in ReplicatedStorage:GetChildren() do
-            print(" -") .. child.Name .. " (" .. child.ClassName .. ")")
+            print(" - " .. child.Name .. " (" .. child.ClassName .. ")")
         end
         error("failed to complete vinesystem module")
     end
