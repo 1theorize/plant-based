@@ -3,10 +3,16 @@
   "tree": {
     "$className": "DataModel",
     "ServerScriptService": {
-      "$path": "src/server"
+      "vine": {
+        "$className": "Script",
+        "$path": "src/server/vine.server.luau"
+      }
     },
     "ReplicatedStorage": {
-      "$path": "src/shared"
+      "vinesystem": {
+        "$className": "ModuleScript",
+        "$path": "src/shared/vinesystem.luau"
+      }
     }
   }
 }
