@@ -4,8 +4,8 @@
     "$className": "DataModel",
     "ServerScriptService": {
       "$className": "ServerScriptService",
-      "vineserver": {
-        "$path": "src/server/vineserver.server.luau"
+      "Vine": {
+        "$path": "src/server/Vine.server.luau"
       }
     },
     "ReplicatedStorage": {
