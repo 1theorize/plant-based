@@ -5,16 +5,16 @@ export type vineconfig = {
 	SegmentLength: number,
 	GrowthRate: number,
 	Color: Color3,
-	StraightSegments: number, -- vines stay straight then bfre crve
+	StraightSegments: number,
 	BranchAtSegment: number?,
 	BranchCount: number?,
 	Generation: number?,
 }
 
 local default_config: vineconfig = {
-	MaxSegments = 30,
-	SegmentLength = 1.4,
-	GrowthRate = 0.04,
+	MaxSegments = 25,
+	SegmentLength = 1.2,
+	GrowthRate = 0.035,
 	Color = Color3.fromRGB(34, 134, 39),
 	StraightSegments = 5,
 	BranchAtSegment = 5,
@@ -25,14 +25,13 @@ local default_config: vineconfig = {
 function vinesystem.grow(startPos: Vector3, initialDirection: Vector3, customconfig: vineconfig?): ()
 	local config = customconfig or default_config
 	local currentPos = startPos
-	local currentdirection = initialDirection.Unit
+	local currentDirection = initialDirection.Unit
 	local generation = config.Generation or 1
 
-	local vinefolder = workspace:FindFirstChild(VineBunch)
-	local vinefolder = Instance.new("Folder")
+	local vinefolder = workspace:FindFirstChild("vinebunch")
 	if not vinefolder then
 		vinefolder = Instance.new("Folder")
-		vinefolder.Name = "VineBunch"
+		vinefolder.Name = "vinebunch"
 		vinefolder.Parent = workspace
 	end
 
@@ -43,18 +42,16 @@ function vinesystem.grow(startPos: Vector3, initialDirection: Vector3, customcon
 	task.spawn(function()
 		for i = 1, config.MaxSegments do
 			local randomOffset = Vector3.new(
-				math.random() - 0.5) * 0.6,
+				(math.random() - 0.5) * 0.6,
 				(math.random() - 0.5) * 0.3,
 				(math.random() - 0.5) * 0.6
 			)
-
-			local searchDirection = (currentdirection + randomOffset).Unit
+			local spreadDirection = (currentDirection + randomOffset).Unit
 
 			local blending = math.clamp((i - config.StraightSegments) / 5, 0, 1)
-			local blendedDirection = (initialDirection.Unit:Lerp(spreadDirection, blending).Unit
+			local blendDirection = initialDirection.Unit:Lerp(spreadDirection, blending).Unit
 
-
-			local raycastresult = workspace:Raycast(currentPos, blendedDirection * config.SegmentLength, raycastParams)
+			local raycastresult = workspace:Raycast(currentPos, blendDirection * config.SegmentLength, raycastParams)
 
 			local nextpos: Vector3
 			local surfaceNormal = Vector3.yAxis
@@ -62,14 +59,14 @@ function vinesystem.grow(startPos: Vector3, initialDirection: Vector3, customcon
 			if raycastresult then 
 				nextpos = raycastresult.Position
 				surfaceNormal = raycastresult.Normal
-				currentdirection = (blendedDirection - 2 * blendedDirection:Dot(surfaceNormal) * surfaceNormal).Unit
+				currentDirection = (blendDirection - 2 * blendDirection:Dot(surfaceNormal) * surfaceNormal).Unit
 			else
-				nextpos = currentPos + (blendedDirection * config.SegmentLength)
-				currentdirection = blendedDirection
+				nextpos = currentPos + (blendDirection * config.SegmentLength)
+				currentDirection = blendDirection
 			end
 
 			local segment = Instance.new("Part")
-			segment.Name = "vinepart" .. generation
+			segment.Name = "vinepart"
 			segment.Shape = Enum.PartType.Cylinder
 			segment.Material = Enum.Material.SmoothPlastic
 			segment.Color = config.Color
@@ -87,24 +84,24 @@ function vinesystem.grow(startPos: Vector3, initialDirection: Vector3, customcon
 
 				for b = 1, branchCount do
 					local angle = (b * angleStep) + (math.random() * 0.2)
-					local outwardDirection = (CFrame.fromAxisAngle(Vector3.yAxis, angle) * CFrame.new(currentdirection)).Position.Unit
-
-					local childconfig = vineconfig = {
+					local outwardDir = (CFrame.fromAxisAngle(Vector3.yAxis, angle) * CFrame.new(currentDirection)).Position.Unit
+					
+					local childConfig: vineconfig = {
 						MaxSegments = config.MaxSegments,
-						SegmentLength = config.SegmentLength,
+						SegmentLength = config.SegmentLength * 0.9,
 						GrowthRate = config.GrowthRate,
 						Color = config.Color,
-						StraightSegments = 3
-						BranchAtSegment = (generation == 2) and nil or 4
-						BranchCount = 4 
-						Generation = generation + 1
+						StraightSegments = 3,
+						BranchAtSegment = (generation == 2) and nil or 4,
+						BranchCount = 4,
+						Generation = generation + 1,
 					}
-		
-vinesystem.grow(nextpos, outwardDirection, childConfig)
+
+					vinesystem.grow(nextpos, outwardDir, childConfig)
 				end
 			end
-			
-			currentpos = nextpos
+
+			currentPos = nextpos
 			task.wait(config.GrowthRate)
 		end
 	end)
