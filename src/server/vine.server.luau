@@ -14,7 +14,7 @@ if not vineModule then
     local origiposition = Vector3.new(0, 5, 0)
     local updwardDirection = Vector3.new(0, 1, 0)
 -- spawn the vine 
-vinesystem.grow(origiposition, updwardDirection, {
+vinesystem.grow(originposition,updwardDirection, {
     MaxSegments = 20
     SegmentLength = 1.3,
     GrowthRate = 0.3,
