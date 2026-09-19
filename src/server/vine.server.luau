@@ -2,7 +2,7 @@ local ReplicatedStorage = game:GetService("ReplicatedStorage")
 local vineModule = ReplicatedStorage:FindFirstChild("vinesystem", true)
 -- because im lwk slow, this should actullay locate the module bro)
 if not vineModule then
-	error("Failed to locate vinesystem module in ReplicatedStorage.")
+	error("Failed to find the vinesystem mod in RS.")
 end
 
 local vinesystem = require(vineModule :: ModuleScript)
